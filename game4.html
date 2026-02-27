@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sound Challenge Pro</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1f1c2c, #928dab);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(15px);
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    width: 400px;
+    color: white;
+    box-shadow: 0 0 25px rgba(0,0,0,0.4);
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px 18px;
+    margin: 6px;
+    font-size: 15px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.08);
+}
+
+.option-btn {
+    background: #ffffff20;
+    color: white;
+}
+
+.play-btn {
+    background: #00c6ff;
+    color: black;
+}
+
+.replay-btn {
+    background: #f9d423;
+    color: black;
+}
+
+#info {
+    margin-top: 15px;
+    font-size: 16px;
+}
+
+#result {
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Sound Challenge</h1>
+
+    <button class="play-btn" onclick="playSound()">Play</button>
+    <button class="replay-btn" onclick="replaySound()">Replay</button>
+
+    <div id="options"></div>
+
+    <div id="info">
+        Score: <span id="score">0</span> |
+        Lives: <span id="lives">3</span> |
+        Level: <span id="level">1</span>
+    </div>
+
+    <div id="result"></div>
+</div>
+
+<script>
+const sounds = [
+    { name: "Dog", file: "dog.mp3" },
+    { name: "Cat", file: "cat.mp3" },
+    { name: "Door Bell", file: "bell.mp3" },
+    { name: "Clap", file: "clap.mp3" }
+];
+
+let audioMap = {};
+let currentSound = null;
+let score = 0;
+let lives = 3;
+let level = 1;
+let combo = 0;
+
+const scoreSpan = document.getElementById("score");
+const livesSpan = document.getElementById("lives");
+const levelSpan = document.getElementById("level");
+const result = document.getElementById("result");
+const optionsDiv = document.getElementById("options");
+
+/* PRELOAD ALL SOUNDS (no delay now) */
+sounds.forEach(s => {
+    audioMap[s.name] = new Audio(s.file);
+});
+
+/* Shuffle */
+function shuffle(array) {
+    return array.sort(() => Math.random() - 0.5);
+}
+
+/* Play Sound */
+function playSound() {
+    if (lives <= 0) return;
+
+    let randomIndex = Math.floor(Math.random() * sounds.length);
+    currentSound = sounds[randomIndex];
+
+    audioMap[currentSound.name].currentTime = 0;
+    audioMap[currentSound.name].play();
+
+    createOptions();
+}
+
+/* Replay */
+function replaySound() {
+    if (currentSound) {
+        audioMap[currentSound.name].currentTime = 0;
+        audioMap[currentSound.name].play();
+    }
+}
+
+/* Create Options */
+function createOptions() {
+    optionsDiv.innerHTML = "";
+
+    let shuffled = shuffle([...sounds]);
+
+    shuffled.forEach(sound => {
+        let btn = document.createElement("button");
+        btn.textContent = sound.name;
+        btn.className = "option-btn";
+        btn.onclick = () => checkAnswer(sound.name);
+        optionsDiv.appendChild(btn);
+    });
+}
+
+/* Check Answer */
+function checkAnswer(selected) {
+    if (!currentSound) return;
+
+    if (selected === currentSound.name) {
+        combo++;
+        score += 10 * combo;
+        result.textContent = "Correct! Combo x" + combo;
+    } else {
+        lives--;
+        combo = 0;
+        result.textContent = "Wrong!";
+    }
+
+    updateUI();
+    updateLevel();
+
+    if (lives <= 0) {
+        result.textContent = "Game Over! Final Score: " + score;
+        optionsDiv.innerHTML = "";
+    }
+
+    currentSound = null;
+}
+
+/* Update UI */
+function updateUI() {
+    scoreSpan.textContent = score;
+    livesSpan.textContent = lives;
+    levelSpan.textContent = level;
+}
+
+/* Level Progress */
+function updateLevel() {
+    level = Math.floor(score / 50) + 1;
+}
+</script>
+
+</body>
+</html>
