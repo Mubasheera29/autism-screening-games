@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Shape Matching Calm Game</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(to bottom, #dfe9f3, #ffffff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 700px;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+h1 {
+    margin-bottom: 10px;
+}
+
+#target {
+    margin: 30px auto;
+    width: 140px;
+    height: 140px;
+}
+
+.choices {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 30px;
+}
+
+.choice {
+    width: 120px;
+    height: 120px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.choice:hover {
+    transform: scale(1.05);
+}
+
+#score {
+    margin-top: 20px;
+    font-size: 18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Shape Matching</h1>
+
+    <div id="target"></div>
+
+    <div class="choices" id="choices"></div>
+
+    <div id="score">Score: 0</div>
+</div>
+
+<script>
+const shapes = ["circle", "square", "triangle", "rectangle", "oval", "diamond"];
+let currentShape = "";
+let score = 0;
+
+const targetDiv = document.getElementById("target");
+const choicesDiv = document.getElementById("choices");
+const scoreDiv = document.getElementById("score");
+
+function drawShape(type, element) {
+    element.innerHTML = "";
+    const shape = document.createElement("div");
+
+    if (type === "circle") {
+        shape.style.width = "100%";
+        shape.style.height = "100%";
+        shape.style.background = "#8ecae6";
+        shape.style.borderRadius = "50%";
+    }
+
+    if (type === "square") {
+        shape.style.width = "100%";
+        shape.style.height = "100%";
+        shape.style.background = "#ffb703";
+    }
+
+    if (type === "triangle") {
+        shape.style.width = "0";
+        shape.style.height = "0";
+        shape.style.borderLeft = "60px solid transparent";
+        shape.style.borderRight = "60px solid transparent";
+        shape.style.borderBottom = "120px solid #fb8500";
+    }
+
+    if (type === "rectangle") {
+        shape.style.width = "100%";
+        shape.style.height = "70%";
+        shape.style.background = "#90be6d";
+        shape.style.marginTop = "20px";
+    }
+
+    if (type === "oval") {
+        shape.style.width = "100%";
+        shape.style.height = "70%";
+        shape.style.background = "#bdb2ff";
+        shape.style.borderRadius = "50%";
+        shape.style.marginTop = "20px";
+    }
+
+    if (type === "diamond") {
+        shape.style.width = "80px";
+        shape.style.height = "80px";
+        shape.style.background = "#f28482";
+        shape.style.transform = "rotate(45deg)";
+        shape.style.margin = "20px auto";
+    }
+
+    element.appendChild(shape);
+}
+
+function newRound() {
+    currentShape = shapes[Math.floor(Math.random() * shapes.length)];
+    drawShape(currentShape, targetDiv);
+    createChoices();
+}
+
+function createChoices() {
+    choicesDiv.innerHTML = "";
+
+    let shuffled = [...shapes].sort(() => Math.random() - 0.5);
+
+    shuffled.forEach(shape => {
+        const div = document.createElement("div");
+        div.className = "choice";
+        drawShape(shape, div);
+
+        div.onclick = function() {
+            checkAnswer(shape);
+        };
+
+        choicesDiv.appendChild(div);
+    });
+}
+
+function checkAnswer(selected) {
+    if (selected === currentShape) {
+        score++;
+        scoreDiv.textContent = "Score: " + score;
+        newRound();
+    }
+}
+
+newRound();
+</script>
+
+</body>
+</html>

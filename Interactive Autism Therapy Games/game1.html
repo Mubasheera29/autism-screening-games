@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Emotion Recognition Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #e6f7ff;
+        }
+
+        h1 {
+            margin-top: 30px;
+        }
+
+        img {
+            width: 250px;
+            height: 250px;
+            margin: 20px;
+        }
+
+        .button {
+            padding: 12px 25px;
+            margin: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        #result {
+            font-size: 20px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        #score {
+            margin-top: 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Emotion Recognition Game</h1>
+<p>Identify the correct emotion shown below</p>
+
+<img id="emotionImage" src="">
+
+<div>
+    <button class="button" onclick="checkAnswer('happy')">Happy</button>
+    <button class="button" onclick="checkAnswer('sad')">Sad</button>
+    <button class="button" onclick="checkAnswer('angry')">Angry</button>
+    <button class="button" onclick="checkAnswer('surprised')">Surprised</button>
+</div>
+
+<p id="result"></p>
+<p id="score">Score: 0</p>
+
+<br>
+<button class="button" onclick="nextQuestion()">Next</button>
+<br><br>
+<a href="index.html">Back to Home</a>
+
+<script>
+    const emotions = ["happy", "sad", "angry", "surprised"];
+    let currentEmotion = "";
+    let score = 0;
+
+    function nextQuestion() {
+        const randomIndex = Math.floor(Math.random() * emotions.length);
+        currentEmotion = emotions[randomIndex];
+        document.getElementById("emotionImage").src = "images/" + currentEmotion + ".png";
+        document.getElementById("result").innerHTML = "";
+    }
+
+    function checkAnswer(answer) {
+        if (answer === currentEmotion) {
+            document.getElementById("result").innerHTML = "Correct!";
+            score++;
+        } else {
+            document.getElementById("result").innerHTML = "Try Again!";
+        }
+        document.getElementById("score").innerHTML = "Score: " + score;
+    }
+
+    // Load first question automatically
+    nextQuestion();
+</script>
+
+</body>
+</html>
